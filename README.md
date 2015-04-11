@@ -9,7 +9,8 @@
 * `secret` (required) Credentials key secret provided by amazon
 * `app_name` (required) Name of the application.
 * `env_name` (required) Name of the application environment you wish to deploy to.
-* `region` (optional) Region that your elastic beanstalk instance lives in, defaults to us-west-2.
+* `region` (required) Region that your elastic beanstalk instance lives in, defaults to us-west-2.
+* `sc` (optional) Source code repository
 
 
 ```yml
@@ -21,4 +22,5 @@ deploy:
             app_name: My Application
             env_name: production
             region: us-west-2
+            sc: git
 ```
