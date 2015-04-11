@@ -78,7 +78,7 @@ global:
   default_platform: 64bit Amazon Linux 2014.03 v1.0.0 running Ruby 2.1 (Puma)
   default_region: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_REGION
   profile: eb-cli
-  sc: git
+  sc: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
 EOT
 if [ $? -ne "0" ]
 then
@@ -103,6 +103,6 @@ then
 fi
 
 debug "Pushing to AWS eb servers."
-$AWSEB_TOOL deploy || true # catach timeout
+$AWSEB_TOOL deploy $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME || true # catach timeout
 
 success 'Successfully pushed to Amazon Elastic Beanstalk'
