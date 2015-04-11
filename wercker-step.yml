@@ -25,3 +25,6 @@ properties:
   region:
     type: string
     required: true
+  sc:
+    type: string
+    required: false
