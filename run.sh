@@ -103,6 +103,4 @@ then
 fi
 
 debug "Pushing to AWS eb servers."
-$AWSEB_TOOL deploy $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME || true # catach timeout
-
-success 'Successfully pushed to Amazon Elastic Beanstalk'
+$AWSEB_TOOL deploy $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME && success 'Successfully pushed to Amazon Elastic Beanstalk'
