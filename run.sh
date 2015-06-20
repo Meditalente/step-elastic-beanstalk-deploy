@@ -36,8 +36,8 @@ fi
 AWSEB_ROOT="$WERCKER_STEP_ROOT/eb-cli"
 AWSEB_TOOL="$AWSEB_ROOT/bin/eb"
 
-#mkdir -p "/home/ubuntu/.elasticbeanstalk/"
-mkdir -p "/home/ubuntu/.aws"
+#mkdir -p "$HOME/.elasticbeanstalk/"
+mkdir -p "$HOME/.aws"
 mkdir -p "$WERCKER_SOURCE_DIR/.elasticbeanstalk/"
 if [ $? -ne "0" ]
 then
