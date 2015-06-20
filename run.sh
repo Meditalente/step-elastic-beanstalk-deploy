@@ -33,11 +33,13 @@ then
     warn "Debug mode turned on, this can dump potentially dangerous information to log files."
 fi
 
-if which eb then
+if which eb
+then
   AWSEB_TOOL=$(which eb)
   info "EB CLI installed at $AWSEB_TOOL."
 else
-  if which pip then
+  if which pip
+  then
     PIP_TOOL=$(which pip)
     info "pip installed at $PIP_TOOL."
     debug "Installing awsebcli."
