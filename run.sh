@@ -53,9 +53,9 @@ then
   PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL git"
 fi
 
-if [ ! -n "$PACKAGES_TO_INSTALL" ]
+if [ -n "$PACKAGES_TO_INSTALL" ]
 then
-  debug "installing packages: $PACKAGES_TO_INSTALL"
+  debug "Installing packages: $PACKAGES_TO_INSTALL"
   eval "sudo apt-get install $PACKAGES_TO_INSTALL" || fail "Failed to install packages $PACKAGES_TO_INSTALL"
 fi
 
