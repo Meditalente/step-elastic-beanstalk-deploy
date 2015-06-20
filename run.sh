@@ -33,23 +33,49 @@ then
     warn "Debug mode turned on, this can dump potentially dangerous information to log files."
 fi
 
+PACKAGES_TO_INSTALL=""
+
+if ! which python
+then
+  debug "python will be installed"
+  PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python"
+fi
+
+if ! which pip
+then
+  debug "python-pip will be installed"
+  PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip"
+fi
+
+if ! which git
+then
+  debug "git will be installed"
+  PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL git"
+fi
+
+if [ ! -n "$PACKAGES_TO_INSTALL" ]
+then
+  debug "installing packages: $PACKAGES_TO_INSTALL"
+  eval "sudo apt-get install $PACKAGES_TO_INSTALL" || fail "Failed to install packages $PACKAGES_TO_INSTALL"
+fi
+
 if which eb
 then
   AWSEB_TOOL=$(which eb)
-  info "EB CLI installed at $AWSEB_TOOL."
+  info "EB CLI installed at $AWSEB_TOOL"
 else
   if which pip
   then
     PIP_TOOL=$(which pip)
-    info "pip installed at $PIP_TOOL."
-    debug "Installing awsebcli."
+    info "pip installed at $PIP_TOOL"
+    debug "Installing awsebcli"
     if sudo "$PIP_TOOL" install awsebcli
     then
       info "The awsebcli installed"
       AWSEB_TOOL=$(which eb)
-      info "EB CLI installed at $AWSEB_TOOL."
+      info "EB CLI installed at $AWSEB_TOOL"
     else
-      fail "Unable to install awsebcli."
+      fail "Unable to install awsebcli"
     fi
   else
     AWSEB_TOOL="$WERCKER_STEP_ROOT/eb-cli/bin/eb"
@@ -57,16 +83,16 @@ else
   fi
 fi
 
-mkdir -p "$HOME/.aws" || fail "Unable to make $HOME/.aws directory."
+mkdir -p "$HOME/.aws" || fail "Unable to make $HOME/.aws directory"
 
-debug "Change back to the source dir.";
+debug "Change back to the source dir";
 cd "$WERCKER_SOURCE_DIR"
 
 AWSEB_CREDENTIAL_FILE="$HOME/.aws/credentials"
 AWSEB_CONFIG_FILE="$HOME/.aws/config"
 AWSEB_EB_CONFIG_FILE="$WERCKER_SOURCE_DIR/.elasticbeanstalk/config.yml"
 
-debug "Setting up credentials."
+debug "Setting up credentials"
 cat <<EOT >> $AWSEB_CREDENTIAL_FILE
 [default]
 aws_access_key_id=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_KEY
@@ -74,10 +100,10 @@ aws_secret_access_key=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SECRET
 EOT
 if [ $? -ne "0" ]
 then
-    fail "Unable to set up config file."
+    fail "Unable to set up config file"
 fi
 
-debug "Setting up AWS config file."
+debug "Setting up AWS config file"
 cat <<EOT >> $AWSEB_CONFIG_FILE
 [default]
 output = text
@@ -85,11 +111,11 @@ region = $WERCKER_ELASTIC_BEANSTALK_DEPLOY_REGION
 EOT
 if [ $? -ne "0" ]
 then
-    fail "Unable to set up config file."
+    fail "Unable to set up config file"
 fi
 
-debug "Setting up EB config file with eb init."
-$AWSEB_TOOL init "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME" || fail "EB is not working or is not set up correctly."
+debug "Setting up EB config file with eb init"
+$AWSEB_TOOL init "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME" || fail "EB is not working or is not set up correctly"
 
 if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
 then
@@ -102,14 +128,14 @@ then
     cat "$AWSEB_EB_CONFIG_FILE"
 fi
 
-$AWSEB_TOOL use "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME" || fail "Unable set EB environment."
+$AWSEB_TOOL use "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME" || fail "Unable set EB environment"
 
-debug "Checking if eb exists and can connect."
+debug "Checking if eb exists and can connect"
 $AWSEB_TOOL status
 if [ $? -ne "0" ]
 then
-    fail "EB is not working or is not set up correctly."
+    fail "EB is not working or is not set up correctly"
 fi
 
 debug "Pushing to AWS eb servers."
-$AWSEB_TOOL deplo&& succes'Successfully pushed to Amazon Elastic Beanstalk'
+$AWSEB_TOOL deploy && succes'Successfully pushed to Amazon Elastic Beanstalk'
