@@ -47,8 +47,8 @@ fi
 debug "Change back to the source dir.";
 cd $WERCKER_SOURCE_DIR
 
-AWSEB_CREDENTIAL_FILE="/home/ubuntu/.aws/aws_credential_file"
-AWSEB_CONFIG_FILE="/home/ubuntu/.aws/config"
+AWSEB_CREDENTIAL_FILE="$HOME/.aws/aws_credential_file"
+AWSEB_CONFIG_FILE="$HOME/.aws/config"
 AWSEB_EB_CONFIG_FILE="$WERCKER_SOURCE_DIR/.elasticbeanstalk/config.yml"
 
 debug "Setting up credentials."
@@ -57,7 +57,7 @@ AWSAccessKeyId=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_KEY
 AWSSecretKey=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SECRET
 EOT
 
-debug "Setting up donfig file."
+debug "Setting up AWS config file."
 cat <<EOT >> $AWSEB_CONFIG_FILE
 [default]
 output = json
@@ -67,8 +67,12 @@ region = $WERCKER_ELASTIC_BEANSTALK_DEPLOY_REGION
 aws_access_key_id = $WERCKER_ELASTIC_BEANSTALK_DEPLOY_KEY
 aws_secret_access_key = $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SECRET
 EOT
+if [ $? -ne "0" ]
+then
+    fail "Unable to set up config file."
+fi
 
-debug "Setting up eb config file."
+debug "Setting up EB config file."
 cat <<EOT >> $AWSEB_EB_CONFIG_FILE
 branch-defaults:
   $WERCKER_GIT_BRANCH:
@@ -87,7 +91,7 @@ fi
 
 if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
 then
-    debug "Dumping config file."
+    debug "Dumping config files."
     cat $AWSEB_CREDENTIAL_FILE
     cat $AWSEB_CONFIG_FILE
     cat $AWSEB_EB_CONFIG_FILE
