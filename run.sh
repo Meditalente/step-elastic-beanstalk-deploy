@@ -52,7 +52,7 @@ else
       fail "Unable to install awsebcli."
     fi
   else
-    AWSEB_TOOL="$WERCKER_STEP_ROOT/eb-cli/$AWSEB_ROOT/bin/eb"
+    AWSEB_TOOL="$WERCKER_STEP_ROOT/eb-cli/bin/eb"
     info "Using local EB CLI at $AWSEB_TOOL"
   fi
 fi
