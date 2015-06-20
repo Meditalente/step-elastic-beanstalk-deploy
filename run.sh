@@ -76,14 +76,8 @@ then
     fail "Unable to set up config file."
 fi
 
-EB_INIT_OPTIONS="$WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME --profile eb-cli --region $WERCKER_ELASTIC_BEANSTALK_DEPLOY_REGION"
-if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
-then
-  EB_INIT_OPTIONS="$EB_INIT_OPTIONS --debug"
-fi
-
 debug "Setting up EB config file with eb init."
-"$AWSEB_TOOL init $EB_INIT_OPTIONS" || fail "EB is not working or is not set up correctly."
+$AWSEB_TOOL init "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME" --profile eb-cli || fail "EB is not working or is not set up correctly."
 
 if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
 then
