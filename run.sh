@@ -1,7 +1,7 @@
 #!/bin/bash
 set +e
 
-cd $HOME
+cd "$HOME"
 if [ ! -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME" ]
 then
     fail "Missing or empty option APP_NAME, please check wercker.yml"
@@ -45,7 +45,7 @@ then
 fi
 
 debug "Change back to the source dir.";
-cd $WERCKER_SOURCE_DIR
+cd "$WERCKER_SOURCE_DIR"
 
 AWSEB_CREDENTIAL_FILE="$HOME/.aws/aws_credential_file"
 AWSEB_CONFIG_FILE="$HOME/.aws/config"
@@ -83,20 +83,20 @@ then
 fi
 
 debug "Setting up EB config file with eb init."
-$($AWSEB_TOOL init $EB_INIT_OPTIONS) || fail "EB is not working or is not set up correctly."
+"$AWSEB_TOOL init $EB_INIT_OPTIONS" || fail "EB is not working or is not set up correctly."
 
 if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
 then
     debug "Dumping config files."
     echo "=== $AWSEB_CREDENTIAL_FILE ==="
-    cat $AWSEB_CREDENTIAL_FILE
+    cat "$AWSEB_CREDENTIAL_FILE"
     echo "=== $AWSEB_CONFIG_FILE ==="
-    cat $AWSEB_CONFIG_FILE
+    cat "$AWSEB_CONFIG_FILE"
     echo "=== $AWSEB_EB_CONFIG_FILE ==="
-    cat $AWSEB_EB_CONFIG_FILE
+    cat "$AWSEB_EB_CONFIG_FILE"
 fi
 
-$AWSEB_TOOL use $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME || fail "Unable set EB environment."
+$AWSEB_TOOL use "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME" || fail "Unable set EB environment."
 
 debug "Checking if eb exists and can connect."
 $AWSEB_TOOL status
@@ -106,4 +106,4 @@ then
 fi
 
 debug "Pushing to AWS eb servers."
-$AWSEB_TOOL deploy $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME && success 'Successfully pushed to Amazon Elastic Beanstalk'
+$AWSEB_TOOL deploy "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME" && success 'Successfully pushed to Amazon Elastic Beanstalk'
