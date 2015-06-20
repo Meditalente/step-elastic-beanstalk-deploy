@@ -56,6 +56,10 @@ cat <<EOT >> $AWSEB_CREDENTIAL_FILE
 AWSAccessKeyId=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_KEY
 AWSSecretKey=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SECRET
 EOT
+if [ $? -ne "0" ]
+then
+    fail "Unable to set up config file."
+fi
 
 debug "Setting up AWS config file."
 cat <<EOT >> $AWSEB_CONFIG_FILE
@@ -72,32 +76,21 @@ then
     fail "Unable to set up config file."
 fi
 
-debug "Setting up EB config file."
-cat <<EOT >> $AWSEB_EB_CONFIG_FILE
-branch-defaults:
-  $WERCKER_GIT_BRANCH:
-    environment: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME
-global:
-  application_name: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME
-  default_platform: 64bit Amazon Linux 2014.03 v1.0.0 running Ruby 2.1 (Puma)
-  default_region: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_REGION
-  profile: eb-cli
-  sc: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
-EOT
-if [ $? -ne "0" ]
-then
-    fail "Unable to set up config file."
-fi
+debug "Setting up EB config file with eb init."
+$AWSEB_TOOL init $WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME || fail "EB is not working or is not set up correctly."
 
 if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
 then
     debug "Dumping config files."
+    echo "=== $AWSEB_CREDENTIAL_FILE ==="
     cat $AWSEB_CREDENTIAL_FILE
+    echo "=== $AWSEB_CONFIG_FILE ==="
     cat $AWSEB_CONFIG_FILE
+    echo "=== $AWSEB_EB_CONFIG_FILE ==="
     cat $AWSEB_EB_CONFIG_FILE
 fi
 
-$AWSEB_TOOL use $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME || fail "EB is not working or is not set up correctly."
+$AWSEB_TOOL use $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME || fail "Unable set EB environment."
 
 debug "Checking if eb exists and can connect."
 $AWSEB_TOOL status
