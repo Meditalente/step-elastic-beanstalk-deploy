@@ -28,6 +28,12 @@ then
     WERCKER_ELASTIC_BEANSTALK_DEPLOY_REGION="us-west-2"
 fi
 
+if [ ! -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC" ]
+then
+    info "Missing or empty option SC, defaulting to git"
+    WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC="git"
+fi
+
 if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
 then
     warn "Debug mode turned on, this can dump potentially dangerous information to log files."
@@ -47,16 +53,16 @@ then
   PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip"
 fi
 
-if ! which git
+if ! which $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
 then
-  debug "git will be installed"
-  PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL git"
+  debug "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC will be installed"
+  PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC"
 fi
 
 if [ -n "$PACKAGES_TO_INSTALL" ]
 then
-  debug "Installing packages: $PACKAGES_TO_INSTALL"
-  sudo apt-get install $PACKAGES_TO_INSTALL -y || fail "Failed to install packages $PACKAGES_TO_INSTALL"
+  debug "Installing packages:$PACKAGES_TO_INSTALL"
+  sudo apt-get install$PACKAGES_TO_INSTALL -y || fail "Failed to install packages$PACKAGES_TO_INSTALL"
 fi
 
 if which eb
@@ -71,11 +77,13 @@ else
     debug "Installing awsebcli"
     if sudo "$PIP_TOOL" install awsebcli
     then
-      info "The awsebcli installed"
+      debug "awsebcli installed"
       AWSEB_TOOL=$(which eb)
       info "EB CLI installed at $AWSEB_TOOL"
     else
-      fail "Unable to install awsebcli"
+      warn "Unable to install awsebcli"
+      AWSEB_TOOL="$WERCKER_STEP_ROOT/eb-cli/bin/eb"
+      info "Using local EB CLI at $AWSEB_TOOL"
     fi
   else
     AWSEB_TOOL="$WERCKER_STEP_ROOT/eb-cli/bin/eb"
@@ -138,4 +146,4 @@ then
 fi
 
 debug "Pushing to AWS eb servers."
-$AWSEB_TOOL deploy && succes'Successfully pushed to Amazon Elastic Beanstalk'
+$AWSEB_TOOL deploy && succes 'Successfully pushed to Amazon Elastic Beanstalk'
