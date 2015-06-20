@@ -56,7 +56,7 @@ fi
 if [ -n "$PACKAGES_TO_INSTALL" ]
 then
   debug "Installing packages: $PACKAGES_TO_INSTALL"
-  eval "sudo apt-get install $PACKAGES_TO_INSTALL" || fail "Failed to install packages $PACKAGES_TO_INSTALL"
+  sudo apt-get install $PACKAGES_TO_INSTALL -y || fail "Failed to install packages $PACKAGES_TO_INSTALL"
 fi
 
 if which eb
