@@ -33,16 +33,29 @@ then
     warn "Debug mode turned on, this can dump potentially dangerous information to log files."
 fi
 
-AWSEB_ROOT="$WERCKER_STEP_ROOT/eb-cli"
-AWSEB_TOOL="$AWSEB_ROOT/bin/eb"
-
-#mkdir -p "$HOME/.elasticbeanstalk/"
-mkdir -p "$HOME/.aws"
-mkdir -p "$WERCKER_SOURCE_DIR/.elasticbeanstalk/"
-if [ $? -ne "0" ]
-then
-    fail "Unable to make directory.";
+if $(which eb); then
+  AWSEB_TOOL=$(which eb)
+  info "EB CLI installed at $AWSEB_TOOL."
+else
+  if $(which pip); then
+    PIP_TOOL=$(which pip)
+    info "pip installed at $PIP_TOOL."
+    debug "Installing awsebcli."
+    if sudo "$PIP_TOOL" install awsebcli
+    then
+      info "The awsebcli installed"
+      AWSEB_TOOL=$(which eb)
+      info "EB CLI installed at $AWSEB_TOOL."
+    else
+      fail "Unable to install awsebcli."
+    fi
+  else
+    AWSEB_TOOL="$WERCKER_STEP_ROOT/eb-cli/$AWSEB_ROOT/bin/eb"
+    info "Using local EB CLI at $AWSEB_TOOL"
+  fi
 fi
+
+mkdir -p "$HOME/.aws" || fail "Unable to make $HOME/.aws directory."
 
 debug "Change back to the source dir.";
 cd "$WERCKER_SOURCE_DIR"
@@ -97,4 +110,4 @@ then
 fi
 
 debug "Pushing to AWS eb servers."
-$AWSEB_TOOL deploy "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME" && success 'Successfully pushed to Amazon Elastic Beanstalk'
+$AWSEB_TOOL deploy && success 'Successfully pushed to Amazon Elastic Beanstalk'
