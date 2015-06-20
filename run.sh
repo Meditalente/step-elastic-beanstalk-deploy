@@ -47,14 +47,15 @@ fi
 debug "Change back to the source dir.";
 cd "$WERCKER_SOURCE_DIR"
 
-AWSEB_CREDENTIAL_FILE="$HOME/.aws/aws_credential_file"
+AWSEB_CREDENTIAL_FILE="$HOME/.aws/credentials"
 AWSEB_CONFIG_FILE="$HOME/.aws/config"
 AWSEB_EB_CONFIG_FILE="$WERCKER_SOURCE_DIR/.elasticbeanstalk/config.yml"
 
 debug "Setting up credentials."
 cat <<EOT >> $AWSEB_CREDENTIAL_FILE
-AWSAccessKeyId=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_KEY
-AWSSecretKey=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SECRET
+[default]
+aws_access_key_id=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_KEY
+aws_secret_access_key=$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SECRET
 EOT
 if [ $? -ne "0" ]
 then
@@ -64,12 +65,8 @@ fi
 debug "Setting up AWS config file."
 cat <<EOT >> $AWSEB_CONFIG_FILE
 [default]
-output = json
+output = text
 region = $WERCKER_ELASTIC_BEANSTALK_DEPLOY_REGION
-
-[profile eb-cli]
-aws_access_key_id = $WERCKER_ELASTIC_BEANSTALK_DEPLOY_KEY
-aws_secret_access_key = $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SECRET
 EOT
 if [ $? -ne "0" ]
 then
@@ -77,7 +74,7 @@ then
 fi
 
 debug "Setting up EB config file with eb init."
-$AWSEB_TOOL init "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME" --profile eb-cli || fail "EB is not working or is not set up correctly."
+$AWSEB_TOOL init "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME" || fail "EB is not working or is not set up correctly."
 
 if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
 then
