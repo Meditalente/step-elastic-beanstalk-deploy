@@ -92,6 +92,7 @@ else
 fi
 
 mkdir -p "$HOME/.aws" || fail "Unable to make $HOME/.aws directory"
+mkdir -p "$WERCKER_SOURCE_DIR/.elasticbeanstalk" || fail "Unable to make $WERCKER_SOURCE_DIR/.elasticbeanstalk directory"
 
 debug "Change back to the source dir";
 cd "$WERCKER_SOURCE_DIR"
@@ -122,8 +123,22 @@ then
     fail "Unable to set up config file"
 fi
 
-debug "Setting up EB config file with eb init"
-$AWSEB_TOOL init "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME" || fail "EB is not working or is not set up correctly"
+debug "Setting up EB config file."
+cat <<EOT >> $AWSEB_EB_CONFIG_FILE
+branch-defaults:
+  $WERCKER_GIT_BRANCH:
+    environment: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME
+global:
+  application_name: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_APP_NAME
+  default_platform: null
+  default_region: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_REGION
+  profile: default
+  sc: $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
+EOT
+if [ $? -ne "0" ]
+then
+    fail "Unable to set up config file."
+fi
 
 if [ -n "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_DEBUG" ]
 then
