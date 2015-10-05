@@ -91,6 +91,8 @@ else
   fi
 fi
 
+info "Using $($AWSEB_TOOL --version)"
+
 mkdir -p "$HOME/.aws" || fail "Unable to make $HOME/.aws directory"
 mkdir -p "$WERCKER_SOURCE_DIR/.elasticbeanstalk" || fail "Unable to make $WERCKER_SOURCE_DIR/.elasticbeanstalk directory"
 
