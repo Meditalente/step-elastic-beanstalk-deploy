@@ -83,13 +83,10 @@ else
       AWSEB_TOOL=$(which eb)
       info "EB CLI installed at $AWSEB_TOOL"
     else
-      warn "Unable to install awsebcli"
-      AWSEB_TOOL="$WERCKER_STEP_ROOT/eb-cli/bin/eb"
-      info "Using local EB CLI at $AWSEB_TOOL"
+      fail "Unable to install awsebcli"
     fi
   else
-    AWSEB_TOOL="$WERCKER_STEP_ROOT/eb-cli/bin/eb"
-    info "Using local EB CLI at $AWSEB_TOOL"
+    fail "PIP not installed"
   fi
 fi
 
