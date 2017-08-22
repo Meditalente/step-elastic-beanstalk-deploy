@@ -62,7 +62,9 @@ fi
 if [ -n "$PACKAGES_TO_INSTALL" ]
 then
   debug "Installing packages:$PACKAGES_TO_INSTALL"
-  sudo apt-get install $PACKAGES_TO_INSTALL -y || fail "Failed to install packages $PACKAGES_TO_INSTALL"
+  sudo apt-get update && \
+    apt-get install $PACKAGES_TO_INSTALL -y && \
+    rm -rf /var/lib/apt/lists/* || fail "Failed to install packages $PACKAGES_TO_INSTALL"
 fi
 
 if which eb
