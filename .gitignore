@@ -1,3 +1,11 @@
-_builds/
-_projects/
-_steps/
+
+# Created by https://www.gitignore.io/api/werckercli
+
+### WerckerCLI ###
+_steps
+_builds
+_cache
+_projects
+.wercker
+
+# End of https://www.gitignore.io/api/werckercli

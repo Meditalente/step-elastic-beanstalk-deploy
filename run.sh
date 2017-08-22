@@ -39,7 +39,7 @@ then
     warn "Debug mode turned on, this can dump potentially dangerous information to log files."
 fi
 
-PACKAGES_TO_INSTALL=""
+PACKAGES_TO_INSTALL="libpython-all-dev"
 
 if ! which python
 then
@@ -62,7 +62,7 @@ fi
 if [ -n "$PACKAGES_TO_INSTALL" ]
 then
   debug "Installing packages:$PACKAGES_TO_INSTALL"
-  sudo apt-get install$PACKAGES_TO_INSTALL -y || fail "Failed to install packages$PACKAGES_TO_INSTALL"
+  sudo apt-get install $PACKAGES_TO_INSTALL -y || fail "Failed to install packages $PACKAGES_TO_INSTALL"
 fi
 
 if which eb
