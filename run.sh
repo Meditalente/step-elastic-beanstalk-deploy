@@ -39,12 +39,12 @@ then
     warn "Debug mode turned on, this can dump potentially dangerous information to log files."
 fi
 
-PACKAGES_TO_INSTALL="libpython-all-dev"
+PACKAGES_TO_INSTALL=""
 
 if ! which python
 then
     debug "python will be installed"
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python"
+    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python libpython-all-dev"
 fi
 
 if ! which pip
@@ -61,23 +61,17 @@ fi
 
 if [ -n "$PACKAGES_TO_INSTALL" ]
 then
+    debug "Updateing packages"
+    sudo apt-get update
     debug "Installing packages: $PACKAGES_TO_INSTALL"
-    if sudo apt-get update && \
-        apt-get install $PACKAGES_TO_INSTALL -y && \
-        rm -rf /var/lib/apt/lists/*
+    if ! apt-get install -y $PACKAGES_TO_INSTALL
     then
         fail "Failed to install packages $PACKAGES_TO_INSTALL"
     fi
+    debug "Clenup packages"
+    rm -rf /var/lib/apt/lists/*
 fi
 
-if ! which eb
-then
-    fail "PIP not installed"
-fi
-
-
-AWSEB_TOOL=$(which eb)
-info "EB CLI installed at $AWSEB_TOOL"
 if ! which pip
 then
     fail "PIP not installed"
@@ -167,4 +161,7 @@ then
 fi
 
 debug "Pushing to AWS eb servers."
-$AWSEB_TOOL deploy && success 'Successfully pushed to Amazon Elastic Beanstalk'
+if $AWSEB_TOOL deploy
+then
+    success "Successfully pushed to Amazon Elastic Beanstalk"
+fi
