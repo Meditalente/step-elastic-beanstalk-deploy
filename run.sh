@@ -50,7 +50,7 @@ fi
 if ! which pip
 then
     debug "python-pip will be installed"
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip libpython-all-dev"
+    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip python-dev"
 fi
 
 if ! which $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
@@ -61,7 +61,7 @@ fi
 
 if [ -n "$PACKAGES_TO_INSTALL" ]
 then
-    debug "Updateing packages"
+    debug "Updating packages"
     sudo apt-get update
     debug "Installing packages: $PACKAGES_TO_INSTALL"
     if ! apt-get install -y $PACKAGES_TO_INSTALL
@@ -80,7 +80,7 @@ fi
 PIP_TOOL=$(which pip)
 info "pip installed at $PIP_TOOL"
 
-debug "Upgrading setyptools"
+debug "Upgrading setuptools"
 sudo pip install --upgrade setuptools
 
 debug "Installing awsebcli"
