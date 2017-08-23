@@ -175,4 +175,6 @@ fi
 if $DEPLOY_CMD
 then
     success "Successfully pushed to Amazon Elastic Beanstalk"
+else
+    fail "Failed deploy to Amazon Elastic Beanstalk"
 fi
