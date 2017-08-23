@@ -162,7 +162,10 @@ then
 fi
 
 debug "Pushing to AWS eb servers."
-if $AWSEB_TOOL deploy
-then
-    success "Successfully pushed to Amazon Elastic Beanstalk"
+if [ -n $WERCKER_ELASTIC_BEANSTALK_DEPLOY_STAGE ]
+    git add $WERCKER_ELASTIC_BEANSTALK_DEPLOY_STAGE
+    $AWSEB_TOOL deploy --staged
+else
+    $AWSEB_TOOL deploy
 fi
+success "Successfully pushed to Amazon Elastic Beanstalk"

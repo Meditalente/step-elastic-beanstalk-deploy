@@ -1,4 +1,4 @@
-#Amazon EB deployment for Wercker.com
+# Amazon EB deployment for Wercker.com
 
 
 [![wercker status](https://app.wercker.com/status/dd1f2ea0b8e654bd31801e1c14ead515/m "wercker status")](https://app.wercker.com/project/bykey/dd1f2ea0b8e654bd31801e1c14ead515)
@@ -10,7 +10,8 @@
 * `app_name` (required) Name of the application.
 * `env_name` (required) Name of the application environment you wish to deploy to.
 * `region` (required) Region that your elastic beanstalk instance lives in, defaults to us-west-2.
-* `sc` (optional) Source code repository
+* `sc` (optional) Source code repository.
+* `stage` (optional) Stage given pattern and use `--staged` flag for deploy.
 
 
 ```yml
@@ -23,4 +24,5 @@ deploy:
             env_name: production
             region: us-west-2
             sc: git
+            stage: build
 ```
