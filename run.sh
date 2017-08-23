@@ -80,7 +80,7 @@ fi
 PIP_TOOL=$(which pip)
 info "pip installed at $PIP_TOOL"
 debug "Installing awsebcli"
-if sudo "$PIP_TOOL" install awsebcli
+if sudo "$PIP_TOOL" install awsebcli six
 then
     debug "awsebcli installed"
     AWSEB_TOOL=$(which eb)
