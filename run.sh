@@ -84,7 +84,7 @@ debug "Upgrading setuptools"
 sudo pip install --upgrade setuptools
 
 debug "Installing awsebcli"
-if sudo "$PIP_TOOL" install awsebcli
+if sudo "$PIP_TOOL" install awsebcli blessed
 then
     debug "awsebcli installed"
     AWSEB_TOOL=$(which eb)
