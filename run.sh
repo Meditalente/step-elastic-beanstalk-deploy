@@ -43,51 +43,56 @@ PACKAGES_TO_INSTALL="libpython-all-dev"
 
 if ! which python
 then
-  debug "python will be installed"
-  PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python"
+    debug "python will be installed"
+    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python"
 fi
 
 if ! which pip
 then
-  debug "python-pip will be installed"
-  PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip"
+    debug "python-pip will be installed"
+    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip"
 fi
 
 if ! which $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
 then
-  debug "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC will be installed"
-  PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC"
+    debug "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC will be installed"
+    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC"
 fi
 
 if [ -n "$PACKAGES_TO_INSTALL" ]
 then
-  debug "Installing packages:$PACKAGES_TO_INSTALL"
-  sudo apt-get update && \
-    apt-get install $PACKAGES_TO_INSTALL -y && \
-    rm -rf /var/lib/apt/lists/* || fail "Failed to install packages $PACKAGES_TO_INSTALL"
+    debug "Installing packages: $PACKAGES_TO_INSTALL"
+    if sudo apt-get update && \
+        apt-get install $PACKAGES_TO_INSTALL -y && \
+        rm -rf /var/lib/apt/lists/*
+    then
+        fail "Failed to install packages $PACKAGES_TO_INSTALL"
+    fi
 fi
 
-if which eb
+if ! which eb
 then
-  AWSEB_TOOL=$(which eb)
-  info "EB CLI installed at $AWSEB_TOOL"
-else
-  if which pip
-  then
-    PIP_TOOL=$(which pip)
-    info "pip installed at $PIP_TOOL"
-    debug "Installing awsebcli"
-    if sudo "$PIP_TOOL" install awsebcli
-    then
-      debug "awsebcli installed"
-      AWSEB_TOOL=$(which eb)
-      info "EB CLI installed at $AWSEB_TOOL"
-    else
-      fail "Unable to install awsebcli"
-    fi
-  else
     fail "PIP not installed"
-  fi
+fi
+
+
+AWSEB_TOOL=$(which eb)
+info "EB CLI installed at $AWSEB_TOOL"
+if ! which pip
+then
+    fail "PIP not installed"
+fi
+
+PIP_TOOL=$(which pip)
+info "pip installed at $PIP_TOOL"
+debug "Installing awsebcli"
+if sudo "$PIP_TOOL" install awsebcli
+then
+    debug "awsebcli installed"
+    AWSEB_TOOL=$(which eb)
+    info "EB CLI installed at $AWSEB_TOOL"
+else
+    fail "Unable to install awsebcli"
 fi
 
 info "Using $($AWSEB_TOOL --version)"
