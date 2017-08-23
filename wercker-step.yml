@@ -28,6 +28,6 @@ properties:
   sc:
     type: string
     required: false
-  stage:
-    type: string
+  staged:
+    type: boolean
     required: false

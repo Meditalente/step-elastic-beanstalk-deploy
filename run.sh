@@ -81,7 +81,7 @@ PIP_TOOL=$(which pip)
 info "pip installed at $PIP_TOOL"
 
 debug "Installing awsebcli"
-if sudo "$PIP_TOOL" install  --upgrade awsebcli
+if sudo "$PIP_TOOL" install --upgrade awsebcli
 then
     debug "awsebcli installed"
     AWSEB_TOOL=$(which eb)
@@ -161,11 +161,17 @@ then
     fail "EB is not working or is not set up correctly"
 fi
 
+
 debug "Pushing to AWS eb servers."
-if [ -n $WERCKER_ELASTIC_BEANSTALK_DEPLOY_STAGE ]
-    git add $WERCKER_ELASTIC_BEANSTALK_DEPLOY_STAGE
-    $AWSEB_TOOL deploy --staged
+if [ $WERCKER_ELASTIC_BEANSTALK_DEPLOY_STAGED == "true" ]
+then
+    debug "Deploy with staged flag"
+    DEPLOY_CMD="$AWSEB_TOOL deploy --staged"
 else
-    $AWSEB_TOOL deploy
+    DEPLOY_CMD="$AWSEB_TOOL deploy"
 fi
-success "Successfully pushed to Amazon Elastic Beanstalk"
+
+if $DEPLOY_CMD
+then
+    success "Successfully pushed to Amazon Elastic Beanstalk"
+fi

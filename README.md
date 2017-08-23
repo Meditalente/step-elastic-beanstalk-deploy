@@ -11,7 +11,7 @@
 * `env_name` (required) Name of the application environment you wish to deploy to.
 * `region` (required) Region that your elastic beanstalk instance lives in, defaults to us-west-2.
 * `sc` (optional) Source code repository.
-* `stage` (optional) Stage given pattern and use `--staged` flag for deploy.
+* `staged` (optional) Use `--staged` flag for deploy.
 
 
 ```yml
@@ -24,5 +24,5 @@ deploy:
             env_name: production
             region: us-west-2
             sc: git
-            stage: build
+            staged: false
 ```
