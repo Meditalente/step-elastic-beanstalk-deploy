@@ -41,19 +41,19 @@ fi
 
 PACKAGES_TO_INSTALL=""
 
-if ! which python
+if ! hash python
 then
     debug "python will be installed"
     PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python"
 fi
 
-if ! which pip
+if ! hash pip
 then
     debug "python-pip will be installed"
     PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip python-dev"
 fi
 
-if ! which $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
+if ! hash $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
 then
     debug "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC will be installed"
     PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC"
@@ -72,7 +72,7 @@ then
     rm -rf /var/lib/apt/lists/*
 fi
 
-if ! which pip
+if ! hash pip
 then
     fail "PIP not installed"
 fi
@@ -155,12 +155,11 @@ fi
 $AWSEB_TOOL use "$WERCKER_ELASTIC_BEANSTALK_DEPLOY_ENV_NAME" || fail "Unable set EB environment"
 
 debug "Checking if eb exists and can connect"
-$AWSEB_TOOL status
-if [ $? -ne "0" ]
+
+if ! $AWSEB_TOOL status
 then
     fail "EB is not working or is not set up correctly"
 fi
-
 
 debug "Pushing to AWS eb servers."
 if [ $WERCKER_ELASTIC_BEANSTALK_DEPLOY_STAGED == "true" ]
