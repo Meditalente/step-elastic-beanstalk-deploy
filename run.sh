@@ -81,15 +81,17 @@ PIP_TOOL=$(which pip)
 info "pip installed at $PIP_TOOL"
 
 debug "Installing awsebcli"
-if sudo "$PIP_TOOL" install --upgrade awsebcli
+if ! hash eb
 then
-    debug "awsebcli installed"
-    AWSEB_TOOL=$(which eb)
-    info "EB CLI installed at $AWSEB_TOOL"
-else
-    fail "Unable to install awsebcli"
+    if ! sudo "$PIP_TOOL" install --upgrade awsebcli
+    then
+        fail "Unable to install awsebcli"
+    fi
 fi
 
+debug "awsebcli installed"
+AWSEB_TOOL=$(which eb)
+info "EB CLI installed at $AWSEB_TOOL"
 info "Using $($AWSEB_TOOL --version)"
 
 mkdir -p "$HOME/.aws" || fail "Unable to make $HOME/.aws directory"
