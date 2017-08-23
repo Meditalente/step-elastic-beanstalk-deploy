@@ -44,13 +44,13 @@ PACKAGES_TO_INSTALL=""
 if ! which python
 then
     debug "python will be installed"
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python libpython-all-dev"
+    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python"
 fi
 
 if ! which pip
 then
     debug "python-pip will be installed"
-    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip"
+    PACKAGES_TO_INSTALL="$PACKAGES_TO_INSTALL python-pip libpython-all-dev"
 fi
 
 if ! which $WERCKER_ELASTIC_BEANSTALK_DEPLOY_SC
